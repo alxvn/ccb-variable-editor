@@ -1,0 +1,5 @@
+// do not put any exe
+**/*.exe
+
+config.json
+project_configs/*
