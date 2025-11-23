@@ -15,6 +15,7 @@ const TOP_MENU_HEIGHT = 75
 const MAIN_SECTION_INITIAL_POS = TOP_MENU_HEIGHT
 
 const SMALL_BUTTON_SIZE = (75, 25).wSize
+const SMALL_BUTTON_SIZE_2 = (85, 25).wSize
 
 var cb = clipboard_new(nil)
 
@@ -28,14 +29,14 @@ frame.disableMaximizeButton()
 
 let panel = frame.Panel()
 
-let projectMenu = panel.StaticBox(size=(HALF_WIN_X - 20, TOP_MENU_HEIGHT - 1), label="Project", pos=(15, 0))
-let addProjectBtn = projectMenu.Button(pos=(5, 5), label="Add Project", size = SMALL_BUTTON_SIZE)
-let selectProjectDropDown = projectMenu.ComboBox(pos=(90, 6), size=(200,25))
+let projectMenu = panel.StaticBox(size=(HALF_WIN_X - 20, TOP_MENU_HEIGHT - 1), label="Extension", pos=(15, 0))
+let addProjectBtn = projectMenu.Button(pos=(5, 5), label="Add Extension", size = SMALL_BUTTON_SIZE_2)
+let selectProjectDropDown = projectMenu.ComboBox(pos=(95, 6), size=(195,25))
 
 let deleteProjectBtn = projectMenu.Button(pos=(300, 5), size = SMALL_BUTTON_SIZE, label="Del selected")
 buttonsToDisableWithoutProjectSelected.add(deleteProjectBtn)
 
-let generatePluginBtn = projectMenu.Button(pos=(385, 5), size = SMALL_BUTTON_SIZE, label="Gen plugin")
+let generatePluginBtn = projectMenu.Button(pos=(385, 5), size = SMALL_BUTTON_SIZE_2, label="Config plugin")
 
 proc setButtonsDisabled(isDisabled: bool) =
     for btn in buttonsToDisableWithoutProjectSelected:
@@ -145,7 +146,7 @@ exportBtn.wEvent_Button do():
     discard exportMsgDlg.display()
 
 addProjectBtn.wEvent_Button do():
-    let addProjectDialog = TextEntryDialog(message = "Input New project name", caption="Add Project dialog")
+    let addProjectDialog = TextEntryDialog(message = "Input New Extension name", caption="Add Extension dialog")
 
     addProjectDialog.wEvent_DialogClosed do():
         let userInput = addProjectDialog.getValue()
@@ -165,11 +166,10 @@ addProjectBtn.wEvent_Button do():
     addProjectDialog.display()
 
 deleteProjectBtn.wEvent_Button do():
-    echo "here"
     let confirmDeletionDialog = MessageDialog(
         style = wYesNo,
         message = fmt"Are you sure you want to remove {projectService.getCurrentProjectFriendlyName()}?",
-        caption = "Delete Project")
+        caption = "Delete Extension")
     
     let isConfirmed = confirmDeletionDialog.display() == wIdYes
     if isConfirmed:
