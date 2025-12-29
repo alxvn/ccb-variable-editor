@@ -6,7 +6,7 @@ import service/project as projectService
 import service/variable as variableService
 import gens/ccb_plugin as ccbPlugin
 
-const APP_NAME = "CopperCube Variable Editor v0.1"
+const APP_NAME = "CopperCube Variable Editor v0.2"
 
 const WIN_X = 1024
 const WIN_Y = 778
@@ -89,29 +89,37 @@ proc clearAllSections() =
         variableSections.delete(i)
     variableSections = @[]
 
-proc addSection(index: int, id: int, name="", value="") =
+proc addSection(index: int, id: int, name="", value="", desc="") =
     let sectionBox = mainSection.StaticBox(pos=(0, 10 + 40 * index), size=(WIN_X - 65, 40), id=id)
     variableSections.add(sectionBox)
     
     sectionBox.StaticText(pos=(0,-6), size=(50,20), label="Name:")
-    let variableNameInput = sectionBox.TextCtrl(pos=(50, -6), size=(220, 18), value=name)
+    let variableNameInput = sectionBox.TextCtrl(pos=(50, -6), size=(160, 18), value=name)
     variableNameInput.wEvent_TextUpdate do():
         variableService.getById(variableNameInput.parent.id.int).name = variableNameInput.value
-        for item in variableService.items:
-            echo "{id: " & $item.id & ", name: \"" & item.name & "\", value: \"" & item.value & "\"}"
+        # for item in variableService.items:
+        #     echo "{id: " & $item.id & ", name: \"" & item.name & "\", value: \"" & item.value & "\"}"
 
-    let copyNameBtn = sectionBox.Button(pos=(280,-10), label="Copy", size=(75,25))
+    let copyNameBtn = sectionBox.Button(pos=(220,-10), label="Copy", size=(75,25))
     copyNameBtn.wEvent_Button do():
         cb.clipboard_clear(LCB_CLIPBOARD)
         let name = variableNameInput.value
         discard cb.clipboard_set_text(name.cstring)
 
-    sectionBox.StaticText(pos=(370,-6), size=(50,20), label="Value:")
-    let variableValueInput = sectionBox.TextCtrl(pos=(420, -6), size=(400, 18), value=value)
+    sectionBox.StaticText(pos=(310,-6), size=(50,20), label="Value:")
+    let variableValueInput = sectionBox.TextCtrl(pos=(360, -6), size=(250, 18), value=value)
     variableValueInput.wEvent_TextUpdate do():
         variableService.getById(variableValueInput.parent.id.int).value = variableValueInput.value
-        for item in variableService.items:
-            echo "{id: " & $item.id & ", name: \"" & item.name & "\", value: \"" & item.value & "\"}"
+        # for item in variableService.items:
+        #     echo "{id: " & $item.id & ", name: \"" & item.name & "\", value: \"" & item.value & "\"}"
+    
+    sectionBox.StaticText(pos=(625, -6), size=(50, 20), label="Desc:")
+    let variableDescInput = sectionBox.TextCtrl(pos=(675, -6), size=(190, 18), value=desc)
+    variableDescInput.wEvent_TextUpdate do():
+        variableService.getById(variableValueInput.parent.id.int).desc = variableDescInput.value
+        # for item in variableService.items:
+        #     echo "{id: " & $item.id & ", name: \"" & item.name & "\", value: \"" & item.value & "\", desc: \"" & item.desc & "\"}"
+
     
     let deleteRowBtn = sectionBox.Button(size=(75,25), label="Delete", pos=(WIN_X - 160, -10))
     deleteRowBtn.wEvent_Button do():
@@ -123,7 +131,7 @@ proc addSection(index: int, id: int, name="", value="") =
         clearAllSections()
 
         for i, v in variableService.items:
-            addSection(i, v.id, v.name, v.value)
+            addSection(i, v.id, v.name, v.value, v.desc)
 
         panel.refresh()
     
@@ -159,7 +167,7 @@ addProjectBtn.wEvent_Button do():
             loadVariables(projectService.getCurrentProjectVariablesConfig())
 
             for i, v in variableService.items:
-                addSection(i, v.id, v.name, v.value)
+                addSection(i, v.id, v.name, v.value, v.desc)
             panel.refresh()
             updateScroll(true)
             
@@ -188,7 +196,7 @@ selectProjectDropDown.wEvent_ComboBox do():
     loadVariables(projectService.getCurrentProjectVariablesConfig())
 
     for i, v in variableService.items:
-        addSection(i, v.id, v.name, v.value)
+        addSection(i, v.id, v.name, v.value, v.desc)
     panel.refresh()
 
     updateScroll(true)

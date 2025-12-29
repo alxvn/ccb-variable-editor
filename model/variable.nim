@@ -3,6 +3,7 @@ type
         id*: int
         name*: string
         value*: string
+        desc*: string
 
 type
   CopperCubeConfiguration* = ref object
